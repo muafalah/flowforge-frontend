@@ -1,8 +1,9 @@
-type Listener = (data: unknown) => void;
+type Listener<T = unknown> = (data: T) => void;
 
 class WebSocketService {
   private ws: WebSocket | null = null;
-  private listeners: Record<string, Listener[]> = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private listeners: Record<string, Listener<any>[]> = {};
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private url: string;
@@ -56,11 +57,12 @@ class WebSocketService {
     }
   }
 
-  listen(event: string, callback: Listener) {
+  listen<T = unknown>(event: string, callback: Listener<T>) {
     if (!this.listeners[event]) {
       this.listeners[event] = [];
     }
-    this.listeners[event].push(callback);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.listeners[event].push(callback as Listener<any>);
 
     // Return an unsubscribe function
     return () => {
@@ -68,7 +70,7 @@ class WebSocketService {
     };
   }
 
-  send(type: string, data: unknown) {
+  send<T = unknown>(type: string, data: T) {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({ type, data }));
     } else {
