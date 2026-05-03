@@ -45,6 +45,7 @@ function renderRegisterPage() {
     isLoading: false,
     login: vi.fn(),
     logout: vi.fn(),
+    updateUser: vi.fn(),
   };
 
   return render(

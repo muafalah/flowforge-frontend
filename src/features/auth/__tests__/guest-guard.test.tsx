@@ -28,6 +28,7 @@ describe("GuestGuard", () => {
       isLoading: true,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     expect(screen.queryByTestId("guest-content")).not.toBeInTheDocument();
@@ -43,6 +44,7 @@ describe("GuestGuard", () => {
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     expect(screen.getByTestId("guest-content")).toBeInTheDocument();
@@ -56,6 +58,7 @@ describe("GuestGuard", () => {
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     expect(screen.queryByTestId("guest-content")).not.toBeInTheDocument();

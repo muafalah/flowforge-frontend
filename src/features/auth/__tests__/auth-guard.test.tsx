@@ -28,6 +28,7 @@ describe("AuthGuard", () => {
       isLoading: true,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     expect(screen.queryByTestId("protected-content")).not.toBeInTheDocument();
@@ -44,6 +45,7 @@ describe("AuthGuard", () => {
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     expect(screen.getByTestId("protected-content")).toBeInTheDocument();
@@ -57,6 +59,7 @@ describe("AuthGuard", () => {
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     expect(screen.queryByTestId("protected-content")).not.toBeInTheDocument();

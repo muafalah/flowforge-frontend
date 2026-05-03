@@ -37,6 +37,7 @@ function renderLoginPage(authOverrides: Partial<AuthContextValue> = {}) {
     isLoading: false,
     login: vi.fn(),
     logout: vi.fn(),
+    updateUser: vi.fn(),
     ...authOverrides,
   };
 
