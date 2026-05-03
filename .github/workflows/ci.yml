@@ -31,5 +31,16 @@ jobs:
     - name: Lint
       run: npm run lint
 
+    - name: Run Unit Tests
+      run: npm run test
+
+    - name: Install Playwright Browsers
+      if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+      run: npx playwright install --with-deps chromium
+
+    - name: Run E2E Tests
+      if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+      run: npm run test:e2e
+
     - name: Build
       run: npm run build
