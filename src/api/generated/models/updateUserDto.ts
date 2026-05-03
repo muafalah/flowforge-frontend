@@ -6,8 +6,11 @@
  * OpenAPI spec version: 1.0
  */
 
-export * from './loginDto';
-export * from './logoutDto';
-export * from './refreshTokenDto';
-export * from './registerDto';
-export * from './updateUserDto';
+export interface UpdateUserDto {
+  /**
+     * Updated name of the user
+     * @minLength 1
+     * @maxLength 100
+     */
+  name: string;
+}

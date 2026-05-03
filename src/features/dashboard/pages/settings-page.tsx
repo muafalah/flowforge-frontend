@@ -1,33 +1,17 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { ProfileForm } from "../components/profile-form";
+import { DeleteAccountCard } from "../components/delete-account-card";
 
 export function SettingsPage() {
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl space-y-6">
       <div>
-        <h3 className="text-lg font-medium">Settings</h3>
-        <p className="text-sm text-muted-foreground">
-          Manage your account settings and set e-mail preferences.
+        <h3 className="text-2xl font-bold tracking-tight">Settings</h3>
+        <p className="text-muted-foreground">
+          Manage your account settings and profile information.
         </p>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>
-            This is a placeholder for profile settings.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Profile configuration will go here.
-          </p>
-        </CardContent>
-      </Card>
+      <ProfileForm />
+      <DeleteAccountCard />
     </div>
   );
 }

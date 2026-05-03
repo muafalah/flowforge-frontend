@@ -1,20 +1,42 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import { AuthProvider } from "../contexts/auth-context";
-import { AuthContext } from "../contexts/auth-context-def";
 import { useContext } from "react";
 import * as tokenStore from "@/api/token-store";
 
+// Create a mock for the plain Axios instance used in restoreSession
+const mockAxiosPost = vi.fn();
+vi.mock("axios", () => ({
+  default: {
+    create: () => ({
+      post: mockAxiosPost,
+    }),
+  },
+}));
+
 // Mock the Orval generated API methods
 vi.mock("@/api/generated/authentication/authentication", () => ({
-  authControllerRefresh: vi.fn(),
   authControllerGetProfile: vi.fn(),
   authControllerLogin: vi.fn(),
   authControllerLogout: vi.fn(),
 }));
 
+// Mock custom-instance to avoid interceptor side effects in tests
+vi.mock("@/api/custom-instance", () => ({
+  AXIOS_INSTANCE: {
+    interceptors: {
+      request: { use: vi.fn() },
+      response: { use: vi.fn() },
+    },
+  },
+  customInstance: vi.fn(),
+}));
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockedApi = (await import("@/api/generated/authentication/authentication")) as any;
+
+// Import AuthProvider and AuthContext AFTER mocks are set up
+const { AuthProvider } = await import("../contexts/auth-context");
+const { AuthContext } = await import("../contexts/auth-context-def");
 
 // Helper component to display auth state
 function AuthStateDisplay() {
@@ -59,10 +81,13 @@ describe("AuthProvider", () => {
   it("should restore session when refresh token exists in localStorage", async () => {
     localStorage.setItem("refresh_token", "valid-refresh-token");
 
-    mockedApi.authControllerRefresh.mockResolvedValueOnce({
+    // Mock plainAxios.post for direct refresh call (Axios response shape)
+    mockAxiosPost.mockResolvedValueOnce({
       data: {
-        accessToken: "new-access-token",
-        refreshToken: "new-refresh-token",
+        data: {
+          accessToken: "new-access-token",
+          refreshToken: "new-refresh-token",
+        },
       },
     });
 
@@ -89,7 +114,8 @@ describe("AuthProvider", () => {
   it("should clear tokens and set unauthenticated when refresh fails", async () => {
     localStorage.setItem("refresh_token", "expired-refresh-token");
 
-    mockedApi.authControllerRefresh.mockRejectedValueOnce(new Error("Unauthorized"));
+    // Mock plainAxios.post to reject (simulating backend 401)
+    mockAxiosPost.mockRejectedValueOnce(new Error("Unauthorized"));
 
     render(
       <AuthProvider>

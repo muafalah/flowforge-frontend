@@ -1,4 +1,3 @@
-import { useAuth } from "@/features/auth/hooks/use-auth";
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useAuth } from "@/features/auth";
 
 export function DashboardPage() {
   const { user } = useAuth();
