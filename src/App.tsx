@@ -5,8 +5,8 @@ import {
   LoginPage,
   RegisterPage,
 } from "@/features/auth";
-import { DashboardPage } from "@/features/dashboard/pages/dashboard-page";
-import { SettingsPage } from "@/features/dashboard/pages/settings-page";
+import { DashboardPage } from "@/features/dashboard";
+import { SettingsPage } from "@/features/settings";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 function App() {
