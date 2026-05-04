@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LogOut, Settings, User, ChevronDown } from "lucide-react";
+import { LogOut, User, ChevronDown, CircleUser } from "lucide-react";
 import { toast } from "sonner";
 
 export function DashboardLayout() {
@@ -82,9 +82,9 @@ export function DashboardLayout() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/settings")}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
+                <DropdownMenuItem onClick={() => navigate("/profile")}>
+                  <CircleUser className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

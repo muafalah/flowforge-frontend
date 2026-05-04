@@ -11,8 +11,11 @@
     "generate:api": "orval",
     "prepare": "husky",
     "test": "vitest run",
+    "test:unit": "vitest run --config vitest.config.ts",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:integration": "vitest run --config vitest.config.integration.ts",
+    "test:e2e": "playwright test",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

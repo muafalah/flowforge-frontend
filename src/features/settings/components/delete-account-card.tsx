@@ -57,7 +57,7 @@ export function DeleteAccountCard() {
   return (
     <Card className="border-destructive/50 bg-destructive/5 pb-0">
       <CardHeader>
-        <CardTitle className="text-destructive">Danger Zone</CardTitle>
+        <CardTitle className="text-destructive">Delete Profile</CardTitle>
         <CardDescription>
           Permanently delete your account and all associated data. Once you
           delete your account, there is no going back. Please be certain.
