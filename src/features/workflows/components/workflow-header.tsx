@@ -13,7 +13,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ArrowLeft, Trash2, Loader2, Pencil } from "lucide-react";
-import { WorkflowStatusBadge } from "./workflow-status-badge";
 import { EditWorkflowDialog } from "./edit-workflow-dialog";
 import { useDeleteWorkflow } from "../hooks/use-workflow-mutations";
 import type { WorkflowDataDto } from "@/api/generated/models";
@@ -61,11 +60,14 @@ export function WorkflowHeader({
               <h2 className="text-2xl font-bold tracking-tight">
                 {workflow.name}
               </h2>
-              <WorkflowStatusBadge status={workflow.status} />
             </div>
-            {workflow.description && (
+            {workflow.description ? (
               <p className="text-muted-foreground text-sm max-w-xl">
                 {String(workflow.description)}
+              </p>
+            ) : (
+              <p className="text-muted-foreground/50 italic text-sm max-w-xl">
+                No description available
               </p>
             )}
           </div>

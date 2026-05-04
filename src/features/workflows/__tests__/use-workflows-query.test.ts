@@ -101,35 +101,6 @@ describe("useWorkflowsQuery", () => {
     expect(result.current.queryState.page).toBe(1);
   });
 
-  it("should update status and reset page", () => {
-    const { result } = renderHook(() => useWorkflowsQuery());
-
-    act(() => {
-      result.current.setPage(2);
-    });
-
-    act(() => {
-      result.current.setStatus("ACTIVE");
-    });
-
-    expect(result.current.queryState.status).toBe("ACTIVE");
-    expect(result.current.queryState.page).toBe(1);
-  });
-
-  it("should clear status", () => {
-    const { result } = renderHook(() => useWorkflowsQuery());
-
-    act(() => {
-      result.current.setStatus("ACTIVE");
-    });
-
-    act(() => {
-      result.current.setStatus(undefined);
-    });
-
-    expect(result.current.queryState.status).toBeUndefined();
-  });
-
   it("should toggle sort field correctly", () => {
     const { result } = renderHook(() => useWorkflowsQuery());
 
@@ -156,13 +127,6 @@ describe("useWorkflowsQuery", () => {
 
     expect(result.current.queryState.sortOrder).toBe("asc");
 
-    // Toggle different field → reset to asc
-    act(() => {
-      result.current.toggleSort("status");
-    });
-
-    expect(result.current.queryState.sortBy).toBe("status");
-    expect(result.current.queryState.sortOrder).toBe("asc");
   });
 
   it("should set sort directly and reset page", () => {

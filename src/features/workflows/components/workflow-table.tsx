@@ -39,7 +39,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { WorkflowStatusBadge } from "./workflow-status-badge";
 import { EditWorkflowDialog } from "./edit-workflow-dialog";
 import { useDeleteWorkflow } from "../hooks/use-workflow-mutations";
 import type { WorkflowDataDto } from "@/api/generated/models";
@@ -109,9 +108,6 @@ function LoadingSkeleton() {
             </div>
           </TableCell>
           <TableCell>
-            <Skeleton className="h-5 w-16 rounded-full" />
-          </TableCell>
-          <TableCell>
             <Skeleton className="h-4 w-12" />
           </TableCell>
           <TableCell>
@@ -138,7 +134,7 @@ function LoadingSkeleton() {
 function EmptyState() {
   return (
     <TableRow>
-      <TableCell colSpan={7} className="h-40">
+      <TableCell colSpan={6} className="h-40">
         <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
           <div className="rounded-full bg-muted p-3">
             <GitBranch className="size-6" />
@@ -210,26 +206,6 @@ export function WorkflowTable({
                 </button>
               </TableHead>
               <TableHead>
-                <button
-                  type="button"
-                  className={cn(
-                    "inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider transition-colors hover:text-foreground",
-                    sortBy === "status"
-                      ? "text-foreground"
-                      : "text-muted-foreground",
-                  )}
-                  onClick={() => onToggleSort("status")}
-                  aria-label="Sort by status"
-                >
-                  Status
-                  <SortIcon
-                    field="status"
-                    currentSort={sortBy}
-                    currentOrder={sortOrder}
-                  />
-                </button>
-              </TableHead>
-              <TableHead>
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Version
                 </span>
@@ -264,7 +240,7 @@ export function WorkflowTable({
                   />
                 </button>
               </TableHead>
-              <TableHead>
+              <TableHead className="text-right">
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Actions
                 </span>
@@ -291,9 +267,6 @@ export function WorkflowTable({
                           </p>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <WorkflowStatusBadge status={workflow.status} />
                     </TableCell>
                     <TableCell>
                       {workflow.activeVersion ? (
@@ -345,8 +318,8 @@ export function WorkflowTable({
                         {formatDate(workflow.updatedAt)}
                       </span>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
                         {/* Edit — role + access gated */}
                         {(userRole === "OWNER" || userRole === "ADMIN") && (
                           <TooltipProvider>
@@ -355,7 +328,7 @@ export function WorkflowTable({
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="size-8"
+                                  className="size-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                                   onClick={() => setEditWorkflow(workflow)}
                                 >
                                   <Pencil className="size-4" />
@@ -392,7 +365,7 @@ export function WorkflowTable({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="size-8"
+                                className="size-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                                 onClick={() =>
                                   navigate(`/workflows/${workflow.id}`)
                                 }

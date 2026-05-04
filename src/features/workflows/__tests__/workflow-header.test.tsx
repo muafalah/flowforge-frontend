@@ -24,7 +24,6 @@ const mockWorkflow: WorkflowDataDto = {
   organizationId: "org-1",
   name: "Test Workflow",
   description: "A workflow description" as unknown as Record<string, unknown>,
-  status: "ACTIVE",
   access: "EDITOR",
   activeVersion: { id: "v-1", version: 1, createdAt: "2024-01-01" },
   versionCount: 1,
@@ -59,11 +58,6 @@ describe("WorkflowHeader", () => {
   it("should render workflow description", () => {
     renderHeader();
     expect(screen.getByText("A workflow description")).toBeInTheDocument();
-  });
-
-  it("should render status badge", () => {
-    renderHeader();
-    expect(screen.getByText("Active")).toBeInTheDocument();
   });
 
   it("should render back button", () => {

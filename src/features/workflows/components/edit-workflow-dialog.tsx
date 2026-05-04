@@ -88,9 +88,9 @@ export function EditWorkflowDialog({
         workflowId: workflow.id,
         data: {
           name: values.name,
-          description: (values.description || undefined) as unknown as
-            | Record<string, unknown>
-            | undefined,
+          description: (!values.description || values.description.trim() === ""
+            ? null
+            : values.description) as unknown as Record<string, unknown>,
           access: values.access,
         },
       },
@@ -155,7 +155,7 @@ export function EditWorkflowDialog({
               name="access"
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

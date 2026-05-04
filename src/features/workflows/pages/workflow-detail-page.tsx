@@ -116,7 +116,7 @@ export function WorkflowDetailPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
       {/* Compact header */}
-      <div className="shrink-0 px-6 pt-4 pb-3">
+      <div className="shrink-0 pb-3">
         <WorkflowHeader
           workflow={workflowData}
           organizationId={organizationId}
@@ -125,7 +125,7 @@ export function WorkflowDetailPage() {
       </div>
 
       {/* DAG Editor — takes remaining height */}
-      <div className="flex-1 min-h-0 mx-6 mb-6 rounded-lg border overflow-hidden">
+      <div className="flex-1 min-h-0 rounded-lg border overflow-hidden">
         <DAGEditor
           workflowId={workflowData.id}
           initialDefinition={activeDefinition ?? null}

@@ -7,7 +7,6 @@
  */
 import type { WorkflowControllerFindAllSortBy } from './workflowControllerFindAllSortBy';
 import type { WorkflowControllerFindAllSortOrder } from './workflowControllerFindAllSortOrder';
-import type { WorkflowControllerFindAllStatus } from './workflowControllerFindAllStatus';
 
 export type WorkflowControllerFindAllParams = {
 /**
@@ -25,10 +24,6 @@ limit?: number;
  * Search filter by workflow name
  */
 search?: string;
-/**
- * Filter by workflow status
- */
-status?: WorkflowControllerFindAllStatus;
 /**
  * Field to sort by
  */

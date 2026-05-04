@@ -26,7 +26,6 @@ const mockWorkflows: WorkflowDataDto[] = [
     organizationId: "org-1",
     name: "Data Pipeline",
     description: "Syncs data" as unknown as Record<string, unknown>,
-    status: "ACTIVE",
     access: "EDITOR",
     activeVersion: { id: "v-1", version: 2, createdAt: "2024-01-01" },
     versionCount: 3,
@@ -39,7 +38,6 @@ const mockWorkflows: WorkflowDataDto[] = [
     organizationId: "org-1",
     name: "Email Notifier",
     description: undefined as unknown as Record<string, unknown>,
-    status: "DRAFT",
     access: "VIEWER",
     activeVersion: undefined,
     versionCount: 0,
@@ -83,12 +81,6 @@ describe("WorkflowTable", () => {
   it("should render workflow descriptions", () => {
     renderTable();
     expect(screen.getByText("Syncs data")).toBeInTheDocument();
-  });
-
-  it("should render status badges", () => {
-    renderTable();
-    expect(screen.getByText("Active")).toBeInTheDocument();
-    expect(screen.getByText("Draft")).toBeInTheDocument();
   });
 
   it("should render active version number", () => {
@@ -167,9 +159,6 @@ describe("WorkflowTable", () => {
 
     await user.click(screen.getByLabelText("Sort by name"));
     expect(props.onToggleSort).toHaveBeenCalledWith("name");
-
-    await user.click(screen.getByLabelText("Sort by status"));
-    expect(props.onToggleSort).toHaveBeenCalledWith("status");
 
     await user.click(screen.getByLabelText("Sort by date"));
     expect(props.onToggleSort).toHaveBeenCalledWith("createdAt");

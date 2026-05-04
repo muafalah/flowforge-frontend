@@ -105,7 +105,8 @@ function autoLayout(definition: DagDefinition): {
           y: layerIndex * VERTICAL_SPACING,
         },
         data: {
-          label: dagNode?.id ?? nodeId,
+          label: dagNode?.name ?? dagNode?.id ?? nodeId,
+          description: dagNode?.description,
           nodeType: dagNode?.type ?? "unknown",
           config: dagNode?.config,
         },

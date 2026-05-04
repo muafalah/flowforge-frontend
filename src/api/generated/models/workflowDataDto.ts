@@ -9,14 +9,12 @@ import type { ActiveVersionSummaryDto } from './activeVersionSummaryDto';
 import type { WorkflowCreatorDto } from './workflowCreatorDto';
 import type { WorkflowDataDtoAccess } from './workflowDataDtoAccess';
 import type { WorkflowDataDtoDescription } from './workflowDataDtoDescription';
-import type { WorkflowDataDtoStatus } from './workflowDataDtoStatus';
 
 export interface WorkflowDataDto {
   id: string;
   organizationId: string;
   name: string;
   description?: WorkflowDataDtoDescription;
-  status: WorkflowDataDtoStatus;
   access: WorkflowDataDtoAccess;
   activeVersion?: ActiveVersionSummaryDto;
   versionCount: number;

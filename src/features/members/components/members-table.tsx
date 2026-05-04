@@ -17,7 +17,6 @@ import {
   Trash2,
   UserCog,
   Crown,
-  Filter,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RoleBadge } from "./role-badge";
@@ -36,14 +35,6 @@ import {
 import { RemoveMemberDialog } from "./remove-member-dialog";
 import { UpdateRoleDialog } from "./update-role-dialog";
 import { TransferOwnershipDialog } from "./transfer-ownership-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface MembersTableProps {
   members: Member[];
@@ -53,8 +44,6 @@ interface MembersTableProps {
   onToggleSort: (field: MembershipControllerFindAllSortBy) => void;
   currentUserId?: string;
   currentUserRole?: "OWNER" | "ADMIN" | "MEMBER";
-  roles: string[];
-  onRolesChange: (roles: string[]) => void;
   refetch: () => void;
 }
 
@@ -149,8 +138,6 @@ export function MembersTable({
   onToggleSort,
   currentUserId,
   currentUserRole,
-  roles,
-  onRolesChange,
   refetch,
 }: MembersTableProps) {
   const [memberToRemove, setMemberToRemove] = useState<Member | null>(null);
@@ -223,42 +210,6 @@ export function MembersTable({
                     currentOrder={sortOrder}
                   />
                 </button>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      type="button"
-                      className={cn(
-                        "inline-flex items-center justify-center size-6 rounded-md hover:bg-muted transition-colors",
-                        roles.length > 0
-                          ? "text-primary bg-primary/10"
-                          : "text-muted-foreground"
-                      )}
-                      aria-label="Filter by role"
-                    >
-                      <Filter className="size-3.5" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-40">
-                    <DropdownMenuLabel>Filter by Role</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {["OWNER", "ADMIN", "MEMBER"].map((role) => (
-                      <DropdownMenuCheckboxItem
-                        key={role}
-                        checked={roles.includes(role)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            onRolesChange([...roles, role]);
-                          } else {
-                            onRolesChange(roles.filter((r) => r !== role));
-                          }
-                        }}
-                      >
-                        <span className="capitalize">{role.toLowerCase()}</span>
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
             </TableHead>
             <TableHead>
@@ -403,7 +354,9 @@ export function MembersTable({
           onOpenChange={(open) => !open && setMemberToUpdate(null)}
           memberId={memberToUpdate.id}
           memberName={memberToUpdate.user.name}
-          currentRole={memberToUpdate.role as import("@/api/generated/models").UpdateMemberRoleDtoRole}
+          currentRole={
+            memberToUpdate.role as import("@/api/generated/models").UpdateMemberRoleDtoRole
+          }
           onSuccess={refetch}
         />
       )}

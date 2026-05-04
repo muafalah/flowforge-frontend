@@ -33,33 +33,32 @@ export function MembersPagination({
   const endItem = Math.min(meta.page * meta.limit, meta.total);
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      {/* Info text */}
-      <p className="text-sm text-muted-foreground">
-        {meta.total === 0 ? (
-          "No results"
-        ) : (
-          <>
-            Showing{" "}
-            <span className="font-medium text-foreground">{startItem}</span> to{" "}
-            <span className="font-medium text-foreground">{endItem}</span> of{" "}
-            <span className="font-medium text-foreground">{meta.total}</span>{" "}
-            members
-          </>
-        )}
-      </p>
-
-      <div className="flex items-center gap-4">
+    <div className="flex flex-row gap-3 items-center justify-between">
+      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        {/* Info text */}
+        <p className="hidden lg:block border-r pr-3 py-0.5 text-sm text-muted-foreground">
+          {meta.total === 0 ? (
+            "No results"
+          ) : (
+            <>
+              Showing{" "}
+              <span className="font-medium text-foreground">{startItem}</span>{" "}
+              to <span className="font-medium text-foreground">{endItem}</span>{" "}
+              of{" "}
+              <span className="font-medium text-foreground">{meta.total}</span>
+            </>
+          )}
+        </p>
         {/* Rows per page */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Rows per page
+          <span className="hidden md:block whitespace-nowrap text-sm text-muted-foreground">
+            Rows
           </span>
           <Select
             value={String(meta.limit)}
             onValueChange={(value) => onLimitChange(Number(value))}
           >
-            <SelectTrigger id="members-page-size" className="w-[70px]" size="sm">
+            <SelectTrigger id="members-page-size" size="sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -70,10 +69,12 @@ export function MembersPagination({
             </SelectContent>
           </Select>
         </div>
+      </div>
 
+      <div className="flex items-center gap-4">
         {/* Page info */}
         <span className="text-sm text-muted-foreground whitespace-nowrap">
-          Page{" "}
+          <span className="hidden md:inline">Page</span>{" "}
           <span className="font-medium text-foreground">{meta.page}</span> of{" "}
           <span className="font-medium text-foreground">{totalPages}</span>
         </span>

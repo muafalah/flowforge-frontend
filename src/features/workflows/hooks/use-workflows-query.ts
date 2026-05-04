@@ -4,7 +4,6 @@ import { getSelectedOrganizationId } from "@/api/organization-store";
 import type {
   WorkflowControllerFindAllSortBy,
   WorkflowControllerFindAllSortOrder,
-  WorkflowControllerFindAllStatus,
   WorkflowListResponseDto,
 } from "@/api/generated/models";
 
@@ -12,7 +11,6 @@ interface WorkflowsQueryState {
   page: number;
   limit: number;
   search: string;
-  status?: WorkflowControllerFindAllStatus;
   sortBy: WorkflowControllerFindAllSortBy;
   sortOrder: WorkflowControllerFindAllSortOrder;
 }
@@ -36,7 +34,6 @@ export function useWorkflowsQuery() {
       page: queryState.page,
       limit: queryState.limit,
       ...(queryState.search ? { search: queryState.search } : {}),
-      ...(queryState.status ? { status: queryState.status } : {}),
       sortBy: queryState.sortBy,
       sortOrder: queryState.sortOrder,
     }),
@@ -64,13 +61,6 @@ export function useWorkflowsQuery() {
   const setSearch = useCallback((search: string) => {
     setQueryState((prev) => ({ ...prev, search, page: 1 }));
   }, []);
-
-  const setStatus = useCallback(
-    (status?: WorkflowControllerFindAllStatus) => {
-      setQueryState((prev) => ({ ...prev, status, page: 1 }));
-    },
-    [],
-  );
 
   const setSort = useCallback(
     (
@@ -109,7 +99,6 @@ export function useWorkflowsQuery() {
     setPage,
     setLimit,
     setSearch,
-    setStatus,
     setSort,
     toggleSort,
     organizationId,

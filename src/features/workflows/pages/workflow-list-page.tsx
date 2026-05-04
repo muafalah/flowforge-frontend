@@ -1,23 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Plus, Search } from "lucide-react";
 import { WorkflowTable } from "../components/workflow-table";
 import { WorkflowsPagination } from "../components/workflows-pagination";
+import { WorkflowsToolbar } from "../components/workflows-toolbar";
 import { CreateWorkflowDialog } from "../components/create-workflow-dialog";
 import { useWorkflowsQuery } from "../hooks/use-workflows-query";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { getSelectedOrganizationId } from "@/api/organization-store";
 import { useMembershipControllerFindByUserId } from "@/api/generated/organization-members/organization-members";
 import type { MembershipResponseDto } from "@/api/generated/models";
-import type { WorkflowControllerFindAllStatus } from "@/api/generated/models";
 
 export function WorkflowListPage() {
   const {
@@ -29,7 +19,6 @@ export function WorkflowListPage() {
     setPage,
     setLimit,
     setSearch,
-    setStatus,
     toggleSort,
   } = useWorkflowsQuery();
 
@@ -76,54 +65,21 @@ export function WorkflowListPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Workflows</h2>
           <p className="text-muted-foreground">
             Manage and monitor your workflow orchestrations.
           </p>
         </div>
-        <Button
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="gap-1.5"
-        >
-          <Plus className="size-4" />
-          Create Workflow
-        </Button>
       </div>
 
-      {/* Toolbar: search + filter */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-          <Input
-            id="workflow-search"
-            placeholder="Search workflows..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <Select
-          value={queryState.status ?? "all"}
-          onValueChange={(val) =>
-            setStatus(
-              val === "all"
-                ? undefined
-                : (val as WorkflowControllerFindAllStatus),
-            )
-          }
-        >
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="All statuses" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="ACTIVE">Active</SelectItem>
-            <SelectItem value="DRAFT">Draft</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Toolbar: search + sort */}
+      <WorkflowsToolbar
+        search={searchInput}
+        onSearchChange={setSearchInput}
+        setIsCreateDialogOpen={setIsCreateDialogOpen}
+      />
 
       {/* Error state */}
       {isError && (

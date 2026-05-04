@@ -7,7 +7,6 @@
  */
 import type { UpdateWorkflowDtoAccess } from './updateWorkflowDtoAccess';
 import type { UpdateWorkflowDtoDescription } from './updateWorkflowDtoDescription';
-import type { UpdateWorkflowDtoStatus } from './updateWorkflowDtoStatus';
 
 export interface UpdateWorkflowDto {
   /**
@@ -21,8 +20,6 @@ export interface UpdateWorkflowDto {
      * @maxLength 500
      */
   description?: UpdateWorkflowDtoDescription;
-  /** Workflow status */
-  status?: UpdateWorkflowDtoStatus;
   /** Default access level for MEMBER role users. OWNER/ADMIN always have full access. */
   access?: UpdateWorkflowDtoAccess;
 }

@@ -130,3 +130,10 @@
   --sidebar-border: hsl(240 3.7% 15.9%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
+
+/* React Flow Edge Selection Style */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--primary)) !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
+}

@@ -59,6 +59,7 @@ export function MembersToolbar({
           )}
         </div>
 
+        {/* Filter Sheet */}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" id="filter-button" className="relative">
@@ -74,64 +75,68 @@ export function MembersToolbar({
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent className="sm:max-w-md">
-            <SheetHeader>
+          <SheetContent className="w-80 sm:w-96">
+            <SheetHeader className="px-6">
               <SheetTitle>Filters</SheetTitle>
               <SheetDescription>
                 Refine the list of members by applying filters.
               </SheetDescription>
             </SheetHeader>
 
-            <div className="grid flex-1 auto-rows-min gap-4 px-4">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium leading-none">Role</h4>
-                {roles.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onRolesChange([])}
-                    className="h-auto p-0 text-xs text-muted-foreground hover:text-primary"
-                  >
-                    Reset
-                  </Button>
-                )}
-              </div>
-              <div className="grid gap-3">
-                {["OWNER", "ADMIN", "MEMBER"].map((role) => {
-                  const isChecked = roles.includes(role);
-                  return (
-                    <div
-                      key={role}
-                      className="flex items-center space-x-3 group"
+            <div className="grid flex-1 auto-rows-min gap-4 px-6">
+              <div className="grid gap-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium leading-none">Role</h4>
+                  {roles.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onRolesChange([])}
+                      className="h-auto p-0 text-xs text-muted-foreground hover:text-primary"
                     >
-                      <input
-                        type="checkbox"
-                        id={`role-${role}`}
-                        checked={isChecked}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            onRolesChange([...roles, role]);
-                          } else {
-                            onRolesChange(roles.filter((r) => r !== role));
-                          }
-                        }}
-                        className="size-4 rounded border-input bg-background text-primary ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 accent-primary"
-                      />
-                      <Label
-                        htmlFor={`role-${role}`}
-                        className="text-sm font-normal cursor-pointer group-hover:text-primary transition-colors"
+                      Reset
+                    </Button>
+                  )}
+                </div>
+                <div className="grid gap-3">
+                  {["OWNER", "ADMIN", "MEMBER"].map((role) => {
+                    const isChecked = roles.includes(role);
+                    return (
+                      <div
+                        key={role}
+                        className="flex items-center space-x-3 group"
                       >
-                        <span className="capitalize">{role.toLowerCase()}</span>
-                      </Label>
-                    </div>
-                  );
-                })}
+                        <input
+                          type="checkbox"
+                          id={`role-${role}`}
+                          checked={isChecked}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              onRolesChange([...roles, role]);
+                            } else {
+                              onRolesChange(roles.filter((r) => r !== role));
+                            }
+                          }}
+                          className="size-4 rounded border-input bg-background text-primary ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 accent-primary"
+                        />
+                        <Label
+                          htmlFor={`role-${role}`}
+                          className="text-sm font-normal cursor-pointer group-hover:text-primary transition-colors"
+                        >
+                          <span className="capitalize">
+                            {role.toLowerCase()}
+                          </span>
+                        </Label>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
-            <SheetFooter className="mt-auto">
+            <SheetFooter className="mt-auto px-6">
               <SheetClose asChild>
-                <Button type="submit" className="w-full">
+                <Button type="submit" variant="outline" className="w-full">
                   Show Results
                 </Button>
               </SheetClose>

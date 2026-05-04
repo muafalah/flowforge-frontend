@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -7,6 +6,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 interface WorkflowsPaginationProps {
   meta: { total: number; page: number; limit: number };
@@ -19,93 +24,95 @@ export function WorkflowsPagination({
   onPageChange,
   onLimitChange,
 }: WorkflowsPaginationProps) {
-  const totalPages = Math.ceil(meta.total / meta.limit);
-  const canPrev = meta.page > 1;
-  const canNext = meta.page < totalPages;
+  const totalPages = Math.ceil(meta.total / meta.limit) || 1;
+  const isFirstPage = meta.page <= 1;
+  const isLastPage = meta.page >= totalPages;
+
+  const startItem = meta.total === 0 ? 0 : (meta.page - 1) * meta.limit + 1;
+  const endItem = Math.min(meta.page * meta.limit, meta.total);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p className="text-sm text-muted-foreground">
-        Showing{" "}
-        <span className="font-medium text-foreground">
-          {Math.min((meta.page - 1) * meta.limit + 1, meta.total)}
-        </span>{" "}
-        to{" "}
-        <span className="font-medium text-foreground">
-          {Math.min(meta.page * meta.limit, meta.total)}
-        </span>{" "}
-        of{" "}
-        <span className="font-medium text-foreground">{meta.total}</span>{" "}
-        workflows
-      </p>
-
-      <div className="flex items-center gap-4">
+    <div className="flex flex-row gap-3 items-center justify-between">
+      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        {/* Info text */}
+        <p className="hidden lg:block border-r pr-3 py-0.5 text-sm text-muted-foreground">
+          {meta.total === 0 ? (
+            "No results"
+          ) : (
+            <>
+              Showing{" "}
+              <span className="font-medium text-foreground">{startItem}</span>{" "}
+              to <span className="font-medium text-foreground">{endItem}</span>{" "}
+              of{" "}
+              <span className="font-medium text-foreground">{meta.total}</span>
+            </>
+          )}
+        </p>
+        {/* Rows per page */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Rows per page
+          <span className="hidden md:block whitespace-nowrap text-sm text-muted-foreground">
+            Rows
           </span>
           <Select
             value={String(meta.limit)}
-            onValueChange={(val) => onLimitChange(Number(val))}
+            onValueChange={(value) => onLimitChange(Number(value))}
           >
-            <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={String(meta.limit)} />
+            <SelectTrigger id="workflows-page-size" size="sm">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {[5, 10, 20, 50].map((size) => (
-                <SelectItem key={size} value={String(size)}>
-                  {size}
-                </SelectItem>
-              ))}
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
             </SelectContent>
           </Select>
         </div>
+      </div>
 
+      <div className="flex items-center gap-4">
+        {/* Page info */}
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
+          <span className="hidden md:inline">Page</span>{" "}
+          <span className="font-medium text-foreground">{meta.page}</span> of{" "}
+          <span className="font-medium text-foreground">{totalPages}</span>
+        </span>
+
+        {/* Navigation buttons */}
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
-            size="icon"
-            className="size-8"
+            size="icon-sm"
             onClick={() => onPageChange(1)}
-            disabled={!canPrev}
-            aria-label="First page"
+            disabled={isFirstPage}
+            aria-label="Go to first page"
           >
             <ChevronsLeft className="size-4" />
           </Button>
           <Button
             variant="outline"
-            size="icon"
-            className="size-8"
+            size="icon-sm"
             onClick={() => onPageChange(meta.page - 1)}
-            disabled={!canPrev}
-            aria-label="Previous page"
+            disabled={isFirstPage}
+            aria-label="Go to previous page"
           >
             <ChevronLeft className="size-4" />
           </Button>
-
-          <span className="text-sm px-2 text-muted-foreground whitespace-nowrap">
-            Page{" "}
-            <span className="font-medium text-foreground">{meta.page}</span> of{" "}
-            <span className="font-medium text-foreground">{totalPages}</span>
-          </span>
-
           <Button
             variant="outline"
-            size="icon"
-            className="size-8"
+            size="icon-sm"
             onClick={() => onPageChange(meta.page + 1)}
-            disabled={!canNext}
-            aria-label="Next page"
+            disabled={isLastPage}
+            aria-label="Go to next page"
           >
             <ChevronRight className="size-4" />
           </Button>
           <Button
             variant="outline"
-            size="icon"
-            className="size-8"
+            size="icon-sm"
             onClick={() => onPageChange(totalPages)}
-            disabled={!canNext}
-            aria-label="Last page"
+            disabled={isLastPage}
+            aria-label="Go to last page"
           >
             <ChevronsRight className="size-4" />
           </Button>

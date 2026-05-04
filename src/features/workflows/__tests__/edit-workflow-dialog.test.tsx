@@ -28,7 +28,6 @@ const mockWorkflow: WorkflowDataDto = {
   organizationId: "org-1",
   name: "Original Workflow",
   description: "Original description" as unknown as Record<string, unknown>,
-  status: "DRAFT",
   access: "EDITOR",
   activeVersion: undefined,
   versionCount: 0,

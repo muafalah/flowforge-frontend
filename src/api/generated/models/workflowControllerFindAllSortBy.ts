@@ -12,5 +12,4 @@ export type WorkflowControllerFindAllSortBy = typeof WorkflowControllerFindAllSo
 export const WorkflowControllerFindAllSortBy = {
   name: 'name',
   createdAt: 'createdAt',
-  status: 'status',
 } as const;

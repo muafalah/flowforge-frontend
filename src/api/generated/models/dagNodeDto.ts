@@ -10,6 +10,10 @@ import type { DagNodeDtoConfig } from './dagNodeDtoConfig';
 export interface DagNodeDto {
   /** Unique node identifier */
   id: string;
+  /** Node name */
+  name: string;
+  /** Optional node description */
+  description?: string;
   /** Node type (e.g., http, script, transform) */
   type: string;
   /** Optional configuration for the node */
