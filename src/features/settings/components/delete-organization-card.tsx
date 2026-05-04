@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/features/auth/hooks/use-auth";
 import {
   Card,
   CardDescription,
@@ -21,68 +19,74 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useUserControllerRemove } from "@/api/generated/users/users";
+import { useOrganizationControllerRemove } from "@/api/generated/organizations/organizations";
+import {
+  getSelectedOrganizationId,
+  clearSelectedOrganizationId,
+} from "@/api/organization-store";
 import type { AxiosError } from "axios";
 import type { ErrorResponseDto } from "@/api/generated/models/errorResponseDto";
 
-export function DeleteAccountCard() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+export function DeleteOrganizationCard() {
   const [isDeleting, setIsDeleting] = useState(false);
-  const deleteMutation = useUserControllerRemove();
+  const selectedOrgId = getSelectedOrganizationId();
+  const deleteMutation = useOrganizationControllerRemove();
 
-  const handleDeleteAccount = async () => {
-    const userId = user?.id;
-    if (!userId) return;
+  const handleDeleteOrganization = async () => {
+    if (!selectedOrgId) return;
 
     setIsDeleting(true);
     try {
-      await deleteMutation.mutateAsync({ id: userId });
-      toast.success("Account deleted successfully.");
+      await deleteMutation.mutateAsync({ id: selectedOrgId });
+      toast.success("Organization deleted successfully.");
 
-      // Clear local auth state and navigate to login
-      await logout();
-      navigate("/login", { replace: true });
+      // Clear the active organization and refresh so guards can prompt again
+      clearSelectedOrganizationId();
+      window.location.assign("/dashboard");
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponseDto>;
       const message =
         axiosError.response?.data?.error?.message ||
-        "Failed to delete account.";
+        "Failed to delete organization.";
       toast.error(message);
     } finally {
       setIsDeleting(false);
     }
   };
 
+  if (!selectedOrgId) {
+    return null;
+  }
+
   return (
     <Card className="border-destructive/50 bg-destructive/5 pb-0">
       <CardHeader>
-        <CardTitle className="text-destructive">Delete Profile</CardTitle>
+        <CardTitle className="text-destructive">Delete Organization</CardTitle>
         <CardDescription>
-          Permanently delete your account and all associated data. Once you
-          delete your account, there is no going back. Please be certain.
+          Permanently delete this organization and all associated data. Once you
+          delete an organization, there is no going back. Please be certain.
         </CardDescription>
       </CardHeader>
       <CardFooter className="border-t border-destructive/10 bg-destructive/5 px-6 py-4">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" disabled={isDeleting}>
-              {isDeleting ? "Deleting account..." : "Delete Account"}
+              {isDeleting ? "Deleting organization..." : "Delete Organization"}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                This action cannot be undone. This will permanently delete the
+                organization and remove its data from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
-                onClick={handleDeleteAccount}
+                onClick={handleDeleteOrganization}
               >
                 Continue
               </AlertDialogAction>

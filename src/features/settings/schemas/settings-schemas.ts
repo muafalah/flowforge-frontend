@@ -9,3 +9,12 @@ export const profileSchema = z.object({
 });
 
 export type ProfileFormValues = z.infer<typeof profileSchema>;
+
+export const organizationSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Organization name is required")
+    .max(100, "Organization name must be at most 100 characters"),
+});
+
+export type OrganizationFormValues = z.infer<typeof organizationSchema>;

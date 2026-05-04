@@ -17,6 +17,7 @@ import {
   setRefreshToken,
   clearTokens,
 } from "@/api/token-store";
+import { clearSelectedOrganizationId } from "@/api/organization-store";
 import {
   authControllerLogin,
   authControllerLogout,
@@ -119,6 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Silently ignore logout API errors — we clear client state regardless
     } finally {
       clearTokens();
+      clearSelectedOrganizationId();
       setUser(null);
     }
   }, []);

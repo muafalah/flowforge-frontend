@@ -75,7 +75,7 @@ describe("DeleteAccountCard", () => {
   it("should render the delete account card", () => {
     renderDeleteAccountCard();
 
-    expect(screen.getByText(/danger zone/i)).toBeInTheDocument();
+    expect(screen.getByText(/delete profile/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /delete account/i })).toBeInTheDocument();
   });
 

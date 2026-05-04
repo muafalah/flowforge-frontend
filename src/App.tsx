@@ -5,8 +5,14 @@ import {
   LoginPage,
   RegisterPage,
 } from "@/features/auth";
+import {
+  OrganizationGuard,
+  CreateOrganizationPage,
+  SelectOrganizationPage,
+} from "@/features/organization";
 import { DashboardPage } from "@/features/dashboard";
-import { SettingsPage } from "@/features/settings";
+import { SettingsPage, ProfilePage } from "@/features/settings";
+import { MembersPage } from "@/features/members";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 function App() {
@@ -31,17 +37,39 @@ function App() {
           }
         />
 
-        {/* Protected routes */}
+        {/* Organization setup — authenticated but no org required */}
+        <Route
+          path="/create-organization"
+          element={
+            <AuthGuard>
+              <CreateOrganizationPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/select-organization"
+          element={
+            <AuthGuard>
+              <SelectOrganizationPage />
+            </AuthGuard>
+          }
+        />
+
+        {/* Protected routes — require auth + organization */}
         <Route
           path="/"
           element={
             <AuthGuard>
-              <DashboardLayout />
+              <OrganizationGuard>
+                <DashboardLayout />
+              </OrganizationGuard>
             </AuthGuard>
           }
         >
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="members" element={<MembersPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
 
         {/* Default redirect */}
