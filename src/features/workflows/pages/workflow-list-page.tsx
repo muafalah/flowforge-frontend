@@ -79,6 +79,7 @@ export function WorkflowListPage() {
         search={searchInput}
         onSearchChange={setSearchInput}
         setIsCreateDialogOpen={setIsCreateDialogOpen}
+        userRole={userRole}
       />
 
       {/* Error state */}

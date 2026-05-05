@@ -98,8 +98,6 @@ export function MembersPage() {
         onToggleSort={toggleSort}
         currentUserId={user?.id}
         currentUserRole={currentUserRole}
-        roles={queryState.roles}
-        onRolesChange={setRoles}
         refetch={refetch}
       />
 

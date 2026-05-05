@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkflowHeader } from "../components/workflow-header";
@@ -10,13 +10,55 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
 });
 
+const mockTriggerRun = vi.fn().mockResolvedValue({ id: "run-12345678" });
+
+vi.mock("../hooks/use-workflow-runs", () => ({
+  useWorkflowRuns: () => ({
+    triggerRun: mockTriggerRun,
+    isTriggering: false,
+    cancelRun: vi.fn(),
+    fetchRuns: vi.fn(),
+    fetchRunDetail: vi.fn(),
+    fetchRunLogs: vi.fn(),
+    isCancelling: false,
+  }),
+}));
+
 vi.mock("../hooks/use-workflow-mutations", () => ({
-  useDeleteWorkflow: () => ({ mutate: vi.fn(), isPending: false }),
   useUpdateWorkflow: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock("../hooks/use-triggers", () => ({
+  useCronJobs: () => ({
+    cronJobs: [],
+    isLoading: false,
+    isMutating: false,
+    fetchCronJobs: vi.fn(),
+    createCronJob: vi.fn(),
+    updateCronJob: vi.fn(),
+    deleteCronJob: vi.fn(),
+  }),
+  useWebhooks: () => ({
+    webhooks: [],
+    isLoading: false,
+    isMutating: false,
+    fetchWebhooks: vi.fn(),
+    createWebhook: vi.fn(),
+    updateWebhook: vi.fn(),
+    deleteWebhook: vi.fn(),
+  }),
 }));
 
 vi.mock("@/api/organization-store", () => ({
   getSelectedOrganizationId: () => "org-1",
+}));
+
+vi.mock("@/api/token-store", () => ({
+  getAccessToken: () => "mock-token",
+}));
+
+vi.mock("sonner", () => ({
+  toast: { success: vi.fn(), error: vi.fn() },
 }));
 
 const mockWorkflow: WorkflowDataDto = {
@@ -50,6 +92,10 @@ function renderHeader(
 }
 
 describe("WorkflowHeader", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("should render workflow name", () => {
     renderHeader();
     expect(screen.getByText("Test Workflow")).toBeInTheDocument();
@@ -65,39 +111,70 @@ describe("WorkflowHeader", () => {
     expect(screen.getByText("Back to Workflows")).toBeInTheDocument();
   });
 
-  it("should show Edit and Delete buttons for OWNER", () => {
+  it("should show Run button for OWNER", () => {
     renderHeader("OWNER");
-    expect(screen.getByRole("button", { name: /edit/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+    // The header renders a "Run" button (Rocket icon + Run text)
+    const runButtons = screen.getAllByRole("button").filter(
+      (btn) => btn.textContent?.trim() === "Run",
+    );
+    expect(runButtons.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("should show Edit and Delete buttons for ADMIN", () => {
+  it("should show Run button for ADMIN", () => {
     renderHeader("ADMIN");
-    expect(screen.getByRole("button", { name: /edit/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+    const runButtons = screen.getAllByRole("button").filter(
+      (btn) => btn.textContent?.trim() === "Run",
+    );
+    expect(runButtons.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("should hide Edit and Delete buttons for MEMBER", () => {
+  it("should hide action buttons for MEMBER", () => {
     renderHeader("MEMBER");
-    expect(screen.queryByRole("button", { name: /edit/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+    // No Run button for MEMBER
+    const runButtons = screen.queryAllByRole("button").filter(
+      (btn) => btn.textContent?.trim() === "Run",
+    );
+    expect(runButtons).toHaveLength(0);
   });
 
-  it("should open Edit dialog on Edit click", async () => {
+  it("should call triggerRun when Run button is clicked", async () => {
     const user = userEvent.setup();
     renderHeader("OWNER");
 
-    await user.click(screen.getByRole("button", { name: /edit/i }));
-    expect(await screen.findByText("Edit Workflow")).toBeInTheDocument();
+    // Find the exact "Run" button (not "Run History")
+    const runButton = screen.getAllByRole("button").find(
+      (btn) => btn.textContent?.trim() === "Run",
+    )!;
+    await user.click(runButton);
+    expect(mockTriggerRun).toHaveBeenCalledTimes(1);
   });
 
-  it("should open Delete confirmation dialog on Delete click", async () => {
+  it("should show success toast after successful trigger", async () => {
+    const { toast } = await import("sonner");
     const user = userEvent.setup();
     renderHeader("OWNER");
 
-    await user.click(screen.getByRole("button", { name: /delete/i }));
-    expect(await screen.findByText("Delete Workflow")).toBeInTheDocument();
-    expect(screen.getByText(/Are you sure you want to delete/)).toBeInTheDocument();
+    const runButton = screen.getAllByRole("button").find(
+      (btn) => btn.textContent?.trim() === "Run",
+    )!;
+    await user.click(runButton);
+
+    expect(toast.success).toHaveBeenCalledWith(
+      expect.stringContaining("run-1234"),
+    );
+  });
+
+  it("should render RunPanel component", () => {
+    renderHeader("OWNER");
+    // RunPanel renders a "Run History" button
+    expect(screen.getByText("Run History")).toBeInTheDocument();
+  });
+
+  it("should render TriggersPanel component", () => {
+    renderHeader("OWNER");
+    expect(
+      screen.getByRole("button", { name: /triggers/i }),
+    ).toBeInTheDocument();
   });
 
   it("should not show description when workflow has none", () => {
@@ -106,6 +183,8 @@ describe("WorkflowHeader", () => {
       description: undefined as unknown as Record<string, unknown>,
     };
     renderHeader("OWNER", workflowNoDesc);
-    expect(screen.queryByText("A workflow description")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("A workflow description"),
+    ).not.toBeInTheDocument();
   });
 });

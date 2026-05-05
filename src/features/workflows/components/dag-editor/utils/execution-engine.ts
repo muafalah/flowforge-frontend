@@ -67,15 +67,18 @@ export async function executeNodeByType(
     const method = String(config.method ?? "GET");
     const urlRaw = String(config.url ?? "");
     const url = interpolateTemplate(urlRaw, context.variables);
-    let parsedHeaders: Record<string, string> = {};
+    let parsedHeaders: Record<string, string>;
 
     try {
-      const headersRaw = String(config.headers ?? "{}");
+      const headersRaw = String(config.headers ?? "{}").trim();
       const headersInterpolated = interpolateTemplate(
         headersRaw,
         context.variables,
       );
-      parsedHeaders = JSON.parse(headersInterpolated) as Record<string, string>;
+      // Use Function constructor instead of JSON.parse to allow trailing commas and single quotes
+       
+      const parseFn = new Function(`return (${headersInterpolated || "{}"})`);
+      parsedHeaders = parseFn() as Record<string, string>;
     } catch {
       parsedHeaders = {};
       pushLog("warn", "Could not parse headers JSON, using empty headers");
@@ -186,9 +189,9 @@ export async function executeNodeByType(
             pushLog("info", "Pyodide script loaded");
           }
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           pyodide = await (window as any).loadPyodide();
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (window as any).__pyodide = pyodide;
           pushLog("info", "Python runtime initialized");
         } else {
@@ -198,7 +201,7 @@ export async function executeNodeByType(
         pushLog("info", "Executing script...");
 
         // Capture stdout/stderr
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+         
         pyodide.runPython(`
 import sys, io
 sys.stdout = io.StringIO()
@@ -215,21 +218,21 @@ sys.stderr = io.StringIO()
         const wrappedScript = `def __user_fn__():\n${indentedScript}\n__result__ = __user_fn__()`;
 
         // Run wrapped script
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+         
         pyodide.runPython(wrappedScript);
 
         // Get result
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+         
         const result = pyodide.globals.get("__result__");
 
         // Get captured output
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+         
         const stdout = String(pyodide.runPython("sys.stdout.getvalue()") ?? "");
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+         
         const stderr = String(pyodide.runPython("sys.stderr.getvalue()") ?? "");
 
         // Reset stdout/stderr
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+         
         pyodide.runPython(`
 sys.stdout = sys.__stdout__
 sys.stderr = sys.__stderr__
@@ -259,7 +262,7 @@ sys.stderr = sys.__stderr__
         // Pyodide PythonError — extract the actual traceback
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const errAny = err as any;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+         
         let msg: string = errAny?.message || "";
         if (!msg) {
           try {
@@ -270,7 +273,7 @@ sys.stderr = sys.__stderr__
         }
         // If still just the class name, try to get more details
         if (msg === "PythonError" || msg === "[object Object]") {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+           
           msg = errAny?.type
             ? `${errAny.type}: ${errAny.message}`
             : "Python execution failed (check Logs tab for details)";
@@ -296,7 +299,7 @@ sys.stderr = sys.__stderr__
       console.error = (...a: unknown[]) =>
         captured.push(`[ERROR] ${a.map(String).join(" ")}`);
 
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+       
       const fn = new Function(script);
       const result = fn();
 
@@ -361,7 +364,7 @@ sys.stderr = sys.__stderr__
 
       // Build a function with explicit named parameters instead of `with`
       // (which is forbidden in strict mode / ESM).
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+       
       const fn = new Function(
         "variables",
         "inputs",
@@ -393,7 +396,7 @@ sys.stderr = sys.__stderr__
 
     try {
       const input = context.inputs[0] ?? {};
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+       
       const fn = new Function("input", `return ${expression}`);
       const value = fn(input);
 

@@ -9,7 +9,7 @@ export function interpolateTemplate(
   // Regex matches @{{ VarName }} or @{{VarName.path}}
   return template.replace(/@\{\{\s*([\w.]+)\s*\}\}/g, (_, path) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+       
       const fn = new Function("variables", `return variables.${path}`);
       const val = fn(variables);
       return val !== undefined && val !== null ? String(val) : "";
@@ -31,7 +31,7 @@ export function interpolateExpression(
 ): string {
   return template.replace(/@\{\{\s*([\w.]+)\s*\}\}/g, (_, path) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+       
       const fn = new Function("variables", `return variables.${path}`);
       const val = fn(variables);
       // Use JSON.stringify so strings get properly quoted

@@ -1,20 +1,12 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { ArrowLeft, Trash2, Loader2, Pencil } from "lucide-react";
+import { ArrowLeft, Rocket, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { EditWorkflowDialog } from "./edit-workflow-dialog";
-import { useDeleteWorkflow } from "../hooks/use-workflow-mutations";
+import { RunPanel } from "./run-panel";
+import { TriggersPanel } from "./triggers-panel";
+import { useWorkflowRuns } from "../hooks/use-workflow-runs";
 import type { WorkflowDataDto } from "@/api/generated/models";
 
 interface WorkflowHeaderProps {
@@ -29,15 +21,18 @@ export function WorkflowHeader({
   userRole,
 }: WorkflowHeaderProps) {
   const navigate = useNavigate();
-  const deleteMutation = useDeleteWorkflow();
   const [editOpen, setEditOpen] = useState(false);
+  const { triggerRun, isTriggering } = useWorkflowRuns(workflow.id);
 
-  const handleDelete = () => {
-    deleteMutation.mutate({
-      organizationId,
-      workflowId: workflow.id,
-    });
-  };
+  const handleTrigger = useCallback(async () => {
+    try {
+      const run = await triggerRun();
+      toast.success(`Run #${run.id.slice(0, 8)} triggered.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to trigger run.";
+      toast.error(msg);
+    }
+  }, [triggerRun]);
 
   return (
     <>
@@ -74,55 +69,32 @@ export function WorkflowHeader({
 
           {(userRole === "OWNER" || userRole === "ADMIN") && (
             <div className="flex items-center gap-2">
-              {/* Edit */}
+              {/* Run Now Button */}
               <Button
-                variant="outline"
                 size="sm"
-                className="gap-1.5"
-                onClick={() => setEditOpen(true)}
+                onClick={handleTrigger}
+                disabled={isTriggering}
+                className="gap-1.5 h-8 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
               >
-                <Pencil className="size-4" />
-                Edit
+                {isTriggering ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Rocket className="size-3.5" />
+                )}
+                Run
               </Button>
 
-              {/* Delete */}
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
-                  >
-                    <Trash2 className="size-4" />
-                    Delete
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Workflow</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete{" "}
-                      <span className="font-medium text-foreground">
-                        {workflow.name}
-                      </span>
-                      ? This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleDelete}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      disabled={deleteMutation.isPending}
-                    >
-                      {deleteMutation.isPending && (
-                        <Loader2 className="mr-2 size-4 animate-spin" />
-                      )}
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              {/* Run Panel */}
+              <RunPanel
+                workflowId={workflow.id}
+                readOnly={false}
+              />
+
+              {/* Triggers Panel */}
+              <TriggersPanel
+                workflowId={workflow.id}
+                readOnly={false}
+              />
             </div>
           )}
         </div>

@@ -189,6 +189,7 @@ export interface EditorToolbarProps {
   onAddNodeOpen: () => void;
   onEditSelected: () => void;
   onDeleteSelected: () => void;
+  onDuplicateSelected: () => void;
   onSave: () => void;
   onRunWorkflow: () => void;
   onStopWorkflow: () => void;

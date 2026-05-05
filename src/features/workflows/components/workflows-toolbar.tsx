@@ -14,12 +14,14 @@ interface WorkflowsToolbarProps {
   search: string;
   onSearchChange: (value: string) => void;
   setIsCreateDialogOpen: (open: boolean) => void;
+  userRole?: string;
 }
 
 export function WorkflowsToolbar({
   search,
   onSearchChange,
   setIsCreateDialogOpen,
+  userRole,
 }: WorkflowsToolbarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -50,7 +52,11 @@ export function WorkflowsToolbar({
         {/* Filter Sheet (Disabled for now as API doesn't support filters yet) */}
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" id="filter-button" className="relative opacity-50 cursor-not-allowed">
+            <Button
+              variant="outline"
+              id="filter-button"
+              className="relative opacity-50 cursor-not-allowed"
+            >
               <Filter className="size-4" />
               Filters
             </Button>
@@ -68,13 +74,15 @@ export function WorkflowsToolbar({
 
       {/* Action controls */}
       <div className="flex items-center gap-2">
-        <Button
-          id="create-workflow-button"
-          onClick={() => setIsCreateDialogOpen(true)}
-        >
-          <Plus className="size-4" />
-          Create Workflow
-        </Button>
+        {userRole !== "MEMBER" && (
+          <Button
+            id="create-workflow-button"
+            onClick={() => setIsCreateDialogOpen(true)}
+          >
+            <Plus className="size-4" />
+            Create Workflow
+          </Button>
+        )}
       </div>
     </div>
   );

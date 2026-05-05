@@ -90,10 +90,12 @@ export function DAGEditor({
   }, [editingNode, nodeRunning, editNodeType, editNodeConfig, setNodes]);
 
   const prevEditingNodeId = editingNode?.id;
-  useMemo(() => {
-    setNodeRunResult(null);
-    setNodeRunning(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setNodeRunResult(null);
+      setNodeRunning(false);
+    }, 0);
+    return () => clearTimeout(t);
   }, [prevEditingNodeId]);
 
   // Add Node run state
@@ -384,6 +386,28 @@ export function DAGEditor({
     setSelectedNodes([]); setSelectedEdges([]); setIsDirty(true);
   };
 
+  const handleDuplicateSelected = () => {
+    if (selectedNodes.length === 0) return;
+    const nodesToDuplicate = nodes.filter((n) => selectedNodes.includes(n.id));
+    const newNodes: Node[] = nodesToDuplicate.map((n) => {
+      const newId = generateNodeId();
+      const data = n.data as DagNodeData;
+      return {
+        ...n,
+        id: newId,
+        position: { x: n.position.x + 40, y: n.position.y + 60 },
+        selected: false,
+        data: {
+          ...data,
+          label: `${String(data.label)} (copy)`,
+          status: "PENDING",
+        },
+      };
+    });
+    setNodes((nds) => [...nds, ...newNodes]);
+    setIsDirty(true);
+  };
+
   const handleRestoreVersion = (version: VersionDataDto) => {
     const def = version.definition as unknown as DagDefinition | null;
     if (!def || !def.nodes?.length) return;
@@ -438,7 +462,8 @@ export function DAGEditor({
         activeVersionNumber={activeVersionNumber} versions={versions}
         workflowRunning={workflowRunning} activateMutation={activateMutation}
         onAddNodeOpen={() => setAddNodeOpen(true)} onEditSelected={handleEditSelected}
-        onDeleteSelected={handleDeleteSelected} onSave={handleSave}
+        onDeleteSelected={handleDeleteSelected} onDuplicateSelected={handleDuplicateSelected}
+        onSave={handleSave}
         onRunWorkflow={handleRunWorkflow} onStopWorkflow={handleStopWorkflow}
         onRestoreVersion={handleRestoreVersion} onActivateVersion={handleActivateVersion}
       />

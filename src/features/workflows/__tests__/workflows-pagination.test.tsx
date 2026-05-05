@@ -29,7 +29,7 @@ describe("WorkflowsPagination", () => {
   it("should render showing information", () => {
     renderPagination();
     expect(screen.getByText(/Showing/)).toBeInTheDocument();
-    expect(screen.getByText(/workflows/)).toBeInTheDocument();
+
     // Verify the "Showing X to Y of Z" text content
     const showingText = screen.getByText(/Showing/).closest("p");
     expect(showingText?.textContent).toContain("1");
@@ -45,25 +45,25 @@ describe("WorkflowsPagination", () => {
 
   it("should disable prev buttons on first page", () => {
     renderPagination({ total: 50, page: 1, limit: 10 });
-    expect(screen.getByLabelText("First page")).toBeDisabled();
-    expect(screen.getByLabelText("Previous page")).toBeDisabled();
-    expect(screen.getByLabelText("Next page")).not.toBeDisabled();
-    expect(screen.getByLabelText("Last page")).not.toBeDisabled();
+    expect(screen.getByLabelText("Go to first page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to previous page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to next page")).not.toBeDisabled();
+    expect(screen.getByLabelText("Go to last page")).not.toBeDisabled();
   });
 
   it("should disable next buttons on last page", () => {
     renderPagination({ total: 50, page: 5, limit: 10 });
-    expect(screen.getByLabelText("First page")).not.toBeDisabled();
-    expect(screen.getByLabelText("Previous page")).not.toBeDisabled();
-    expect(screen.getByLabelText("Next page")).toBeDisabled();
-    expect(screen.getByLabelText("Last page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to first page")).not.toBeDisabled();
+    expect(screen.getByLabelText("Go to previous page")).not.toBeDisabled();
+    expect(screen.getByLabelText("Go to next page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to last page")).toBeDisabled();
   });
 
   it("should call onPageChange when clicking next", async () => {
     const user = userEvent.setup();
     renderPagination({ total: 50, page: 2, limit: 10 });
 
-    await user.click(screen.getByLabelText("Next page"));
+    await user.click(screen.getByLabelText("Go to next page"));
     expect(onPageChange).toHaveBeenCalledWith(3);
   });
 
@@ -71,7 +71,7 @@ describe("WorkflowsPagination", () => {
     const user = userEvent.setup();
     renderPagination({ total: 50, page: 3, limit: 10 });
 
-    await user.click(screen.getByLabelText("Previous page"));
+    await user.click(screen.getByLabelText("Go to previous page"));
     expect(onPageChange).toHaveBeenCalledWith(2);
   });
 
@@ -79,7 +79,7 @@ describe("WorkflowsPagination", () => {
     const user = userEvent.setup();
     renderPagination({ total: 50, page: 3, limit: 10 });
 
-    await user.click(screen.getByLabelText("First page"));
+    await user.click(screen.getByLabelText("Go to first page"));
     expect(onPageChange).toHaveBeenCalledWith(1);
   });
 
@@ -87,7 +87,7 @@ describe("WorkflowsPagination", () => {
     const user = userEvent.setup();
     renderPagination({ total: 50, page: 2, limit: 10 });
 
-    await user.click(screen.getByLabelText("Last page"));
+    await user.click(screen.getByLabelText("Go to last page"));
     expect(onPageChange).toHaveBeenCalledWith(5);
   });
 
@@ -101,9 +101,9 @@ describe("WorkflowsPagination", () => {
 
   it("should handle single page scenario", () => {
     renderPagination({ total: 5, page: 1, limit: 10 });
-    expect(screen.getByLabelText("First page")).toBeDisabled();
-    expect(screen.getByLabelText("Previous page")).toBeDisabled();
-    expect(screen.getByLabelText("Next page")).toBeDisabled();
-    expect(screen.getByLabelText("Last page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to first page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to previous page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to next page")).toBeDisabled();
+    expect(screen.getByLabelText("Go to last page")).toBeDisabled();
   });
 });

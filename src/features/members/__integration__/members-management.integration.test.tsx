@@ -112,8 +112,6 @@ describe("Members Management (integration)", () => {
               onToggleSort={mockToggleSort}
               currentUserId={currentUserId}
               currentUserRole={currentUserRole}
-              roles={[]}
-              onRolesChange={mockSetRoles}
               refetch={mockRefetch}
             />
             {members.length > 0 && (

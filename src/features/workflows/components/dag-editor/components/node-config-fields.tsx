@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -9,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { NodeConfigFieldsProps } from "../types";
+import { CodeEditor } from "./code-editor";
 
 export function NodeConfigFields({
   nodeType,
@@ -58,24 +58,26 @@ export function NodeConfigFields({
             <Label className="text-xs">
               Headers <span className="text-muted-foreground">(JSON)</span>
             </Label>
-            <Textarea
+            <CodeEditor
               value={String(config.headers ?? "{}")}
-              onChange={(e) => update("headers", e.target.value)}
+              onChange={(v) => update("headers", v)}
+              language="json"
               placeholder='{"Authorization": "Bearer ..."}'
-              rows={2}
-              className="text-xs font-mono resize-none"
+              minLines={2}
+              maxLines={8}
             />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">
               Body <span className="text-muted-foreground">(JSON)</span>
             </Label>
-            <Textarea
+            <CodeEditor
               value={String(config.body ?? "")}
-              onChange={(e) => update("body", e.target.value)}
+              onChange={(v) => update("body", v)}
+              language="json"
               placeholder='{"key": "value"}'
-              rows={2}
-              className="text-xs font-mono resize-none"
+              minLines={2}
+              maxLines={10}
             />
           </div>
           <div className="space-y-1.5">
@@ -124,12 +126,19 @@ export function NodeConfigFields({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Script</Label>
-            <Textarea
+            <CodeEditor
               value={String(config.script ?? "")}
-              onChange={(e) => update("script", e.target.value)}
+              onChange={(v) => update("script", v)}
+              language={
+                String(config.language ?? "javascript") === "python"
+                  ? "python"
+                  : String(config.language ?? "javascript") === "shell"
+                    ? "bash"
+                    : "javascript"
+              }
               placeholder="// Your code here..."
-              rows={4}
-              className="text-xs font-mono resize-none"
+              minLines={5}
+              maxLines={16}
             />
           </div>
           <div className="space-y-1.5">
@@ -176,12 +185,13 @@ export function NodeConfigFields({
           </p>
           <div className="space-y-1.5">
             <Label className="text-xs">Expression</Label>
-            <Textarea
+            <CodeEditor
               value={String(config.expression ?? "")}
-              onChange={(e) => update("expression", e.target.value)}
+              onChange={(v) => update("expression", v)}
+              language="javascript"
               placeholder='e.g. inputs[0]?.body?.status === "active"'
-              rows={2}
-              className="text-xs font-mono resize-none"
+              minLines={2}
+              maxLines={6}
             />
             <p className="text-[10px] text-muted-foreground">
               JavaScript expression that evaluates to <code className="bg-muted px-1 rounded">true</code> or{" "}
