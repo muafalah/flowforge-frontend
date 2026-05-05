@@ -8,6 +8,7 @@ import {
   Plus,
   CircleUser,
   Users,
+  GitBranch,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -50,6 +51,11 @@ const navItems = [
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Workflows",
+    url: "/workflows",
+    icon: GitBranch,
   },
   {
     title: "Members",

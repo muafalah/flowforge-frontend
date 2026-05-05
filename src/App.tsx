@@ -13,6 +13,10 @@ import {
 import { DashboardPage } from "@/features/dashboard";
 import { SettingsPage, ProfilePage } from "@/features/settings";
 import { MembersPage } from "@/features/members";
+import {
+  WorkflowListPage,
+  WorkflowDetailPage,
+} from "@/features/workflows";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 function App() {
@@ -67,6 +71,8 @@ function App() {
           }
         >
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="workflows" element={<WorkflowListPage />} />
+          <Route path="workflows/:workflowId" element={<WorkflowDetailPage />} />
           <Route path="members" element={<MembersPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfilePage />} />

@@ -1,0 +1,119 @@
+/* ── CodeEditor ── Minimalist code editing surface (light) ───── */
+
+.code-editor-wrapper {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.35);
+  transition: border-color 0.15s ease;
+}
+
+.code-editor-wrapper:focus-within {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 1px hsl(var(--ring) / 0.25);
+}
+
+/* Language badge pill in top-right corner */
+.code-editor-lang {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.5rem;
+  z-index: 10;
+  padding: 0 0.375rem;
+  height: 1.125rem;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+}
+
+/* The react-simple-code-editor root */
+.code-editor-wrapper .code-editor-root {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  min-height: 80px;
+  caret-color: hsl(var(--foreground));
+  tab-size: 2;
+}
+
+/* Textarea (the editable layer) */
+.code-editor-wrapper .code-editor-root textarea {
+  outline: none !important;
+  padding: 0.75rem !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Pre (the highlighted layer) */
+.code-editor-wrapper .code-editor-root pre {
+  padding: 0.75rem !important;
+}
+
+/* ── Prism token colors — soft light palette ─────────────────── */
+
+.code-editor-wrapper .token.comment,
+.code-editor-wrapper .token.prolog,
+.code-editor-wrapper .token.doctype,
+.code-editor-wrapper .token.cdata {
+  color: hsl(215 15% 58%);
+  font-style: italic;
+}
+
+.code-editor-wrapper .token.property,
+.code-editor-wrapper .token.tag,
+.code-editor-wrapper .token.constant,
+.code-editor-wrapper .token.symbol,
+.code-editor-wrapper .token.deleted {
+  color: hsl(355 65% 48%);
+}
+
+.code-editor-wrapper .token.boolean,
+.code-editor-wrapper .token.number {
+  color: hsl(30 75% 42%);
+}
+
+.code-editor-wrapper .token.selector,
+.code-editor-wrapper .token.attr-name,
+.code-editor-wrapper .token.string,
+.code-editor-wrapper .token.char,
+.code-editor-wrapper .token.builtin,
+.code-editor-wrapper .token.inserted {
+  color: hsl(140 40% 36%);
+}
+
+.code-editor-wrapper .token.operator,
+.code-editor-wrapper .token.entity,
+.code-editor-wrapper .token.url,
+.code-editor-wrapper .token.variable {
+  color: hsl(187 50% 38%);
+}
+
+.code-editor-wrapper .token.atrule,
+.code-editor-wrapper .token.attr-value,
+.code-editor-wrapper .token.function,
+.code-editor-wrapper .token.class-name {
+  color: hsl(210 60% 42%);
+}
+
+.code-editor-wrapper .token.keyword {
+  color: hsl(280 50% 48%);
+}
+
+.code-editor-wrapper .token.regex,
+.code-editor-wrapper .token.important {
+  color: hsl(40 80% 42%);
+}
+
+.code-editor-wrapper .token.punctuation {
+  color: hsl(215 15% 50%);
+}
