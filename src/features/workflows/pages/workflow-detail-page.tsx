@@ -120,7 +120,7 @@ export function WorkflowDetailPage() {
         <WorkflowHeader
           workflow={workflowData}
           organizationId={organizationId}
-          userRole={userRole as "OWNER" | "ADMIN" | "MEMBER"}
+          readOnly={readOnly}
         />
       </div>
 

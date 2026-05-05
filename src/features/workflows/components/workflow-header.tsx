@@ -12,13 +12,13 @@ import type { WorkflowDataDto } from "@/api/generated/models";
 interface WorkflowHeaderProps {
   workflow: WorkflowDataDto;
   organizationId: string;
-  userRole: "OWNER" | "ADMIN" | "MEMBER";
+  readOnly?: boolean;
 }
 
 export function WorkflowHeader({
   workflow,
   organizationId,
-  userRole,
+  readOnly,
 }: WorkflowHeaderProps) {
   const navigate = useNavigate();
   const [editOpen, setEditOpen] = useState(false);
@@ -67,7 +67,7 @@ export function WorkflowHeader({
             )}
           </div>
 
-          {(userRole === "OWNER" || userRole === "ADMIN") && (
+          {!readOnly && (
             <div className="flex items-center gap-2">
               {/* Run Now Button */}
               <Button
@@ -85,16 +85,10 @@ export function WorkflowHeader({
               </Button>
 
               {/* Run Panel */}
-              <RunPanel
-                workflowId={workflow.id}
-                readOnly={false}
-              />
+              <RunPanel workflowId={workflow.id} readOnly={false} />
 
               {/* Triggers Panel */}
-              <TriggersPanel
-                workflowId={workflow.id}
-                readOnly={false}
-              />
+              <TriggersPanel workflowId={workflow.id} readOnly={false} />
             </div>
           )}
         </div>

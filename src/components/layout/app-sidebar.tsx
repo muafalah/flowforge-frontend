@@ -9,6 +9,7 @@ import {
   CircleUser,
   Users,
   GitBranch,
+  ScrollText,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -63,9 +64,16 @@ const navItems = [
     icon: Users,
   },
   {
+    title: "Activity Logs",
+    url: "/activity-logs",
+    icon: ScrollText,
+    requiredRoles: ["OWNER", "ADMIN"] as string[],
+  },
+  {
     title: "Settings",
     url: "/settings",
     icon: Settings,
+    requiredRoles: ["OWNER", "ADMIN"] as string[],
   },
   {
     title: "Profile",
@@ -187,9 +195,8 @@ export function AppSidebar() {
               <SidebarMenu>
                 {navItems.map((item) => {
                   if (
-                    item.title === "Settings" &&
-                    userRole !== "OWNER" &&
-                    userRole !== "ADMIN"
+                    item.requiredRoles &&
+                    (!userRole || !item.requiredRoles.includes(userRole))
                   ) {
                     return null;
                   }
