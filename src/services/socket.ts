@@ -2,18 +2,28 @@ import { io, type Socket } from "socket.io-client";
 import { getAccessToken } from "@/api/token-store";
 
 type Listener<T = unknown> = (data: T) => void;
+type ConnectionListener = (connected: boolean) => void;
 
 class SocketService {
   private socket: Socket | null = null;
   private url: string;
+  private connectionListeners = new Set<ConnectionListener>();
 
   constructor(url: string) {
     this.url = url;
   }
 
+  /** Notify all connection listeners */
+  private notifyConnectionChange(connected: boolean) {
+    this.connectionListeners.forEach((listener) => listener(connected));
+  }
+
   /** Connect to the Socket.io server with JWT auth */
   connect(): Socket {
-    if (this.socket?.connected) {
+    if (this.socket) {
+      if (!this.socket.connected) {
+        this.socket.connect();
+      }
       return this.socket;
     }
 
@@ -31,10 +41,12 @@ class SocketService {
 
     this.socket.on("connect", () => {
       console.log("[Socket.io] Connected:", this.socket?.id);
+      this.notifyConnectionChange(true);
     });
 
     this.socket.on("disconnect", (reason) => {
       console.log("[Socket.io] Disconnected:", reason);
+      this.notifyConnectionChange(false);
     });
 
     this.socket.on("connect_error", (err) => {
@@ -42,6 +54,21 @@ class SocketService {
     });
 
     return this.socket;
+  }
+
+  /**
+   * Subscribe to connection state changes.
+   * The listener is called immediately with the current state,
+   * then on every connect/disconnect event.
+   * Returns an unsubscribe function.
+   */
+  onConnectionChange(listener: ConnectionListener): () => void {
+    this.connectionListeners.add(listener);
+    // Immediately notify with current state
+    listener(this.socket?.connected ?? false);
+    return () => {
+      this.connectionListeners.delete(listener);
+    };
   }
 
   /** Subscribe to an event. Returns an unsubscribe function. */
@@ -66,7 +93,14 @@ class SocketService {
 
   /** Join a specific room (e.g., workflow run channel) */
   joinRoom(room: string): void {
-    this.emit("join-room", { room });
+    if (this.socket?.connected) {
+      this.socket.emit("join-room", { room });
+    } else {
+      // Queue the join for when we connect
+      this.socket?.once("connect", () => {
+        this.socket?.emit("join-room", { room });
+      });
+    }
   }
 
   /** Leave a specific room */
@@ -90,6 +124,7 @@ class SocketService {
       this.socket.removeAllListeners();
       this.socket.disconnect();
       this.socket = null;
+      this.connectionListeners.clear();
     }
   }
 }
