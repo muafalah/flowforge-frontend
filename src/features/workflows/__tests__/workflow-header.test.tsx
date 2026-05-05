@@ -75,7 +75,7 @@ const mockWorkflow: WorkflowDataDto = {
 };
 
 function renderHeader(
-  userRole: "OWNER" | "ADMIN" | "MEMBER" = "OWNER",
+  readOnly = false,
   workflow = mockWorkflow,
 ) {
   return render(
@@ -84,7 +84,7 @@ function renderHeader(
         <WorkflowHeader
           workflow={workflow}
           organizationId="org-1"
-          userRole={userRole}
+          readOnly={readOnly}
         />
       </MemoryRouter>
     </QueryClientProvider>,
@@ -111,8 +111,8 @@ describe("WorkflowHeader", () => {
     expect(screen.getByText("Back to Workflows")).toBeInTheDocument();
   });
 
-  it("should show Run button for OWNER", () => {
-    renderHeader("OWNER");
+  it("should show Run button when not read-only", () => {
+    renderHeader(false);
     // The header renders a "Run" button (Rocket icon + Run text)
     const runButtons = screen.getAllByRole("button").filter(
       (btn) => btn.textContent?.trim() === "Run",
@@ -120,17 +120,9 @@ describe("WorkflowHeader", () => {
     expect(runButtons.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("should show Run button for ADMIN", () => {
-    renderHeader("ADMIN");
-    const runButtons = screen.getAllByRole("button").filter(
-      (btn) => btn.textContent?.trim() === "Run",
-    );
-    expect(runButtons.length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("should hide action buttons for MEMBER", () => {
-    renderHeader("MEMBER");
-    // No Run button for MEMBER
+  it("should hide action buttons when read-only", () => {
+    renderHeader(true);
+    // No Run button for read-only
     const runButtons = screen.queryAllByRole("button").filter(
       (btn) => btn.textContent?.trim() === "Run",
     );
@@ -139,7 +131,7 @@ describe("WorkflowHeader", () => {
 
   it("should call triggerRun when Run button is clicked", async () => {
     const user = userEvent.setup();
-    renderHeader("OWNER");
+    renderHeader(false);
 
     // Find the exact "Run" button (not "Run History")
     const runButton = screen.getAllByRole("button").find(
@@ -152,7 +144,7 @@ describe("WorkflowHeader", () => {
   it("should show success toast after successful trigger", async () => {
     const { toast } = await import("sonner");
     const user = userEvent.setup();
-    renderHeader("OWNER");
+    renderHeader(false);
 
     const runButton = screen.getAllByRole("button").find(
       (btn) => btn.textContent?.trim() === "Run",
@@ -165,13 +157,13 @@ describe("WorkflowHeader", () => {
   });
 
   it("should render RunPanel component", () => {
-    renderHeader("OWNER");
+    renderHeader();
     // RunPanel renders a "Run History" button
     expect(screen.getByText("Run History")).toBeInTheDocument();
   });
 
   it("should render TriggersPanel component", () => {
-    renderHeader("OWNER");
+    renderHeader();
     expect(
       screen.getByRole("button", { name: /triggers/i }),
     ).toBeInTheDocument();
@@ -182,7 +174,7 @@ describe("WorkflowHeader", () => {
       ...mockWorkflow,
       description: undefined as unknown as Record<string, unknown>,
     };
-    renderHeader("OWNER", workflowNoDesc);
+    renderHeader(false, workflowNoDesc);
     expect(
       screen.queryByText("A workflow description"),
     ).not.toBeInTheDocument();

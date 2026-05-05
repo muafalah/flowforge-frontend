@@ -222,7 +222,7 @@ export function EditorToolbar({
                 className="gap-1.5 px-2 sm:px-3 shrink-0"
               >
                 <History className="size-4" />
-                <span>Version</span>
+                <span>Versions</span>
                 <Badge
                   variant="secondary"
                   className="text-[10px] px-1.5 py-0 h-4 ml-0.5"

@@ -17,6 +17,7 @@ import {
   WorkflowListPage,
   WorkflowDetailPage,
 } from "@/features/workflows";
+import { ActivityLogsPage } from "@/features/activity-logs";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 function App() {
@@ -74,6 +75,7 @@ function App() {
           <Route path="workflows" element={<WorkflowListPage />} />
           <Route path="workflows/:workflowId" element={<WorkflowDetailPage />} />
           <Route path="members" element={<MembersPage />} />
+          <Route path="activity-logs" element={<ActivityLogsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>

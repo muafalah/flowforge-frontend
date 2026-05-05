@@ -175,12 +175,12 @@ describe("EditorToolbar", () => {
       renderToolbar({
         versions: [mockVersion] as EditorToolbarProps["versions"],
       });
-      expect(screen.getByText("Version")).toBeInTheDocument();
+      expect(screen.getByText("Versions")).toBeInTheDocument();
     });
 
     it("should hide Version button when no versions", () => {
       renderToolbar({ versions: [] });
-      expect(screen.queryByText("Version")).not.toBeInTheDocument();
+      expect(screen.queryByText("Versions")).not.toBeInTheDocument();
     });
 
     it("should show version count badge", () => {
@@ -199,7 +199,7 @@ describe("EditorToolbar", () => {
         versions: [mockVersion] as EditorToolbarProps["versions"],
       });
 
-      await user.click(screen.getByText("Version").closest("button")!);
+      await user.click(screen.getByText("Versions").closest("button")!);
       expect(
         await screen.findByText("Version History"),
       ).toBeInTheDocument();
