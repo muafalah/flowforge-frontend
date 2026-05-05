@@ -195,6 +195,7 @@ export interface EditorToolbarProps {
   onStopWorkflow: () => void;
   onRestoreVersion: (version: VersionDataDto) => void;
   onActivateVersion: (versionId: string) => void;
+  onAiGenerate: () => void;
 }
 
 export interface WorkflowRunSheetProps {
