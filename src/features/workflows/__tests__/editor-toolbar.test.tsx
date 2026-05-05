@@ -40,6 +40,7 @@ function createDefaultProps(
     onStopWorkflow: vi.fn(),
     onRestoreVersion: vi.fn(),
     onActivateVersion: vi.fn(),
+    onAiGenerate: vi.fn(),
     ...overrides,
   };
 }

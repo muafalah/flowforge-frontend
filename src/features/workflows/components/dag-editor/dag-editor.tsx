@@ -23,6 +23,7 @@ import { EditorToolbar } from "./components/editor-toolbar";
 import { AddNodeSheet } from "./components/add-node-sheet";
 import { EditNodeSheet } from "./components/edit-node-sheet";
 import { WorkflowRunSheet } from "./components/workflow-run-sheet";
+import { AiGenerateDialog } from "./components/ai-generate-dialog";
 
 export function DAGEditor({
   workflowId, initialDefinition, versions = [],
@@ -47,6 +48,7 @@ export function DAGEditor({
   const [newNodeConfig, setNewNodeConfig] = useState<Record<string, unknown>>(() => ({ ...DEFAULT_CONFIGS["http_call"] }));
   const [newNodeSettings, setNewNodeSettings] = useState<NodeSettings>(() => ({ ...DEFAULT_NODE_SETTINGS }));
   const [isDirty, setIsDirty] = useState(false);
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
 
   // Sync nodes/edges when initialLayout arrives asynchronously (e.g. API data)
   // Only sync if the user hasn't made manual edits yet.
@@ -414,6 +416,20 @@ export function DAGEditor({
     try { const layout = autoLayout(def); setNodes(layout.nodes); setEdges(layout.edges); setIsDirty(true); } catch { /* ignore */ }
   };
 
+  const handleAiGenerate = useCallback(
+    (definition: import("../../types").DagDefinition) => {
+      try {
+        const layout = autoLayout(definition);
+        setNodes(layout.nodes);
+        setEdges(layout.edges);
+        setIsDirty(true);
+      } catch {
+        // Ignore layout errors
+      }
+    },
+    [setNodes, setEdges],
+  );
+
   const handleActivateVersion = (versionId: string) => {
     activateMutation.mutate({ organizationId, workflowId, versionId });
   };
@@ -466,6 +482,7 @@ export function DAGEditor({
         onSave={handleSave}
         onRunWorkflow={handleRunWorkflow} onStopWorkflow={handleStopWorkflow}
         onRestoreVersion={handleRestoreVersion} onActivateVersion={handleActivateVersion}
+        onAiGenerate={() => setAiDialogOpen(true)}
       />
 
       {!readOnly && (
@@ -506,9 +523,19 @@ export function DAGEditor({
 
         {nodes.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center space-y-2 text-muted-foreground">
+            <div className="text-center space-y-3 text-muted-foreground pointer-events-auto">
               <p className="text-sm font-medium">Start building your workflow</p>
               <p className="text-xs">Click <strong>&quot;Add Node&quot;</strong> to add steps, then drag between handles to connect them.</p>
+              {!readOnly && (
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-gradient-to-r from-violet-600 to-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:from-violet-700 hover:to-indigo-700 hover:shadow-md"
+                  onClick={() => setAiDialogOpen(true)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>
+                  Generate with AI
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -531,6 +558,15 @@ export function DAGEditor({
         onStopWorkflow={handleStopWorkflow}
         onRunAgain={() => { setWorkflowRunResult(null); handleRunWorkflow(); }}
       />
+
+      {!readOnly && (
+        <AiGenerateDialog
+          open={aiDialogOpen}
+          onOpenChange={setAiDialogOpen}
+          onApply={handleAiGenerate}
+          hasExistingNodes={nodes.length > 0}
+        />
+      )}
     </div>
   );
 }

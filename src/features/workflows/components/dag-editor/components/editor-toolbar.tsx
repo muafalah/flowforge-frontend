@@ -28,6 +28,7 @@ import {
   Square,
   Play,
   Copy,
+  Sparkles,
 } from "lucide-react";
 import { formatDate } from "../utils/auto-layout";
 import type { EditorToolbarProps } from "../types";
@@ -53,6 +54,7 @@ export function EditorToolbar({
   onStopWorkflow,
   onRestoreVersion,
   onActivateVersion,
+  onAiGenerate,
 }: EditorToolbarProps) {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-2 px-4 py-2.5 border-b bg-muted/30 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -72,6 +74,25 @@ export function EditorToolbar({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Add node</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+
+        {/* AI Generate */}
+        {!readOnly && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 size-8 px-0 sm:w-auto sm:px-3 shrink-0 border-violet-300 text-violet-600 hover:bg-violet-50 hover:text-violet-700"
+                  onClick={onAiGenerate}
+                >
+                  <Sparkles className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Generate workflow with AI</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         )}
